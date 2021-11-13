@@ -13,6 +13,12 @@ public class Movement : MonoBehaviour
     [SerializeField] ParticleSystem rightThrustParticle;
     [SerializeField] ParticleSystem leftThrustParticle;
     [SerializeField] ParticleSystem mainThrustParticle;
+    [SerializeField] ParticleSystem fuelParticle;
+    float maxFuel = 100f;
+    [SerializeField] float fuel = 100f;
+    [SerializeField] float mainThrustCost = 0.03f;
+    [SerializeField] float sideThrustCost = 0.01f;
+
 
 
     void Start()
@@ -31,9 +37,12 @@ public class Movement : MonoBehaviour
 
     void ProcessThrust()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && fuel > 0)
         {
+            Debug.Log(fuel);
+            fuel -= mainThrustCost;
             rb.AddRelativeForce(Vector3.up * upwardsThrust * Time.deltaTime);
+
             if (!audioSource.isPlaying)
             {
                 audioSource.PlayOneShot(Engine, 0.5f);
@@ -53,30 +62,57 @@ public class Movement : MonoBehaviour
 
     void ProcessRotation()
     {
-        if (Input.GetKey(KeyCode.A))
+        if (fuel > 0)
         {
-            rb.freezeRotation = true;
-            transform.Rotate(Vector3.forward * rotateSpeed * Time.deltaTime);
-            rb.freezeRotation = false;
-            if (!rightThrustParticle.isPlaying)
+            
+            if (Input.GetKey(KeyCode.A))
             {
-                rightThrustParticle.Play();
+                fuel -= sideThrustCost;
+                Debug.Log(fuel);
+                rb.freezeRotation = true;
+                transform.Rotate(Vector3.forward * rotateSpeed * Time.deltaTime);
+                rb.freezeRotation = false;
+                if (!rightThrustParticle.isPlaying)
+                {
+                    rightThrustParticle.Play();
+                }
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                fuel -= sideThrustCost;
+                Debug.Log(fuel);
+                rb.freezeRotation = true;
+                transform.Rotate(Vector3.back * rotateSpeed * Time.deltaTime);
+                rb.freezeRotation = false;
+                if (!leftThrustParticle.isPlaying)
+                {
+                    leftThrustParticle.Play();
+                }
+            }
+            else
+            {
+                rightThrustParticle.Stop();
+                leftThrustParticle.Stop();
             }
         }
-        else if (Input.GetKey(KeyCode.D))
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Fuel")
         {
-            rb.freezeRotation = true;
-            transform.Rotate(Vector3.back * rotateSpeed * Time.deltaTime);
-            rb.freezeRotation = false;
-            if (!leftThrustParticle.isPlaying)
-            {
-                leftThrustParticle.Play();
-            }
+            Destroy(other.gameObject);
+            fuelParticle.Play();
+            AddFuel();
         }
-        else
+    }
+
+    void AddFuel()
+    {
+        fuel += 50;
+        if(fuel > maxFuel)
         {
-            rightThrustParticle.Stop();
-            leftThrustParticle.Stop();
+            fuel = maxFuel;
         }
     }
 }

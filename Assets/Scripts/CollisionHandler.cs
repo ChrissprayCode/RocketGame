@@ -48,7 +48,6 @@ public class CollisionHandler : MonoBehaviour
 
         switch (collision.gameObject.tag)
         {
-
             case "Finish":
                 StartSuccessSequence();
                 break;
