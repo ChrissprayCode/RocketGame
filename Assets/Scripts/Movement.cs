@@ -12,6 +12,8 @@ public class Movement : MonoBehaviour
     [SerializeField] AudioClip Engine;
     [SerializeField] ParticleSystem rightThrustParticle;
     [SerializeField] ParticleSystem leftThrustParticle;
+    [SerializeField] ParticleSystem backThrustParticle;
+    [SerializeField] ParticleSystem frontThrustParticle;
     [SerializeField] ParticleSystem mainThrustParticle;
     [SerializeField] ParticleSystem fuelParticle;
     float maxFuel = 100f;
@@ -89,8 +91,34 @@ public class Movement : MonoBehaviour
                     leftThrustParticle.Play();
                 }
             }
+            else if (Input.GetKey(KeyCode.W))
+            {
+                fuel -= sideThrustCost;
+                Debug.Log(fuel);
+                rb.freezeRotation = true;
+                transform.Rotate(Vector3.right * rotateSpeed * Time.deltaTime);
+                rb.freezeRotation = false;
+                if (!frontThrustParticle.isPlaying)
+                {
+                    frontThrustParticle.Play();
+                }
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                fuel -= sideThrustCost;
+                Debug.Log(fuel);
+                rb.freezeRotation = true;
+                transform.Rotate(Vector3.left * rotateSpeed * Time.deltaTime);
+                rb.freezeRotation = false;
+                if (!backThrustParticle.isPlaying)
+                {
+                    backThrustParticle.Play();
+                }
+            }
             else
             {
+                frontThrustParticle.Stop();
+                backThrustParticle.Stop();
                 rightThrustParticle.Stop();
                 leftThrustParticle.Stop();
             }
