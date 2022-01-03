@@ -21,12 +21,13 @@ public class Movement : MonoBehaviour
     [SerializeField] float mainThrustCost = 0.03f;
     [SerializeField] float sideThrustCost = 0.01f;
 
-
+    public FuelBar fb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        fb.setMaxFuel(maxFuel);
     }
 
     // Update is called once per frame
@@ -34,6 +35,7 @@ public class Movement : MonoBehaviour
     {
         ProcessThrust();
         ProcessRotation();
+        fb.SetFuel(fuel);
     }
 
 
@@ -70,6 +72,7 @@ public class Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.A))
             {
                 fuel -= sideThrustCost;
+                //fb.SetFuel(fuel);
                 Debug.Log(fuel);
                 rb.freezeRotation = true;
                 transform.Rotate(Vector3.forward * rotateSpeed * Time.deltaTime);
@@ -82,6 +85,7 @@ public class Movement : MonoBehaviour
             else if (Input.GetKey(KeyCode.D))
             {
                 fuel -= sideThrustCost;
+                //fb.SetFuel(fuel);
                 Debug.Log(fuel);
                 rb.freezeRotation = true;
                 transform.Rotate(Vector3.back * rotateSpeed * Time.deltaTime);
@@ -90,7 +94,7 @@ public class Movement : MonoBehaviour
                 {
                     leftThrustParticle.Play();
                 }
-            }
+            } /*
             else if (Input.GetKey(KeyCode.W))
             {
                 fuel -= sideThrustCost;
@@ -114,7 +118,7 @@ public class Movement : MonoBehaviour
                 {
                     backThrustParticle.Play();
                 }
-            }
+            } */
             else
             {
                 frontThrustParticle.Stop();
@@ -142,5 +146,6 @@ public class Movement : MonoBehaviour
         {
             fuel = maxFuel;
         }
+        fb.SetFuel(fuel);
     }
 }

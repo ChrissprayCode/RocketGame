@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Friendly
   - Fuel
+  - fuel_bar
   layers:
   - Default
   - TransparentFX
